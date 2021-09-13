@@ -196,6 +196,15 @@ FORCE_INLINE void _draw_centered_temp(const celsius_t temp, const uint8_t tx, co
   }
 }
 
+FORCE_INLINE void _draw_centered_level(const float level, const uint8_t tx, const uint8_t ty){
+  const uint8_t ty2 = ty + MENU_FONT_HEIGHT;
+  const char *level_str = ftostr53sign(level);
+  const char level_str_1[8] = {level_str[0], level_str[1], level_str[2], level_str[3],0,0,0,0};
+  const char level_str_2[8] = {' ', level_str[4], level_str[5], level_str[6],0,0,0,0};
+  lcd_put_u8str(tx - 8 * (INFO_FONT_WIDTH) / 2 + 1, ty, level_str_1);
+  lcd_put_u8str(tx - 8 * (INFO_FONT_WIDTH) / 2 + 1, ty2, level_str_2);
+}
+
 #if DO_DRAW_FLOWMETER
   FORCE_INLINE void _draw_centered_flowrate(const float flow, const uint8_t tx, const uint8_t ty) {
     const char *str = ftostr11ns(flow);
@@ -204,7 +213,6 @@ FORCE_INLINE void _draw_centered_temp(const celsius_t temp, const uint8_t tx, co
     lcd_put_u8str("L");
   }
 #endif
-
 #if DO_DRAW_AMMETER
   FORCE_INLINE void _draw_centered_current(const float current, const uint8_t tx, const uint8_t ty) {
     const char *str = ftostr31ns(current);
@@ -305,6 +313,14 @@ FORCE_INLINE void _draw_centered_temp(const celsius_t temp, const uint8_t tx, co
   }
 
 #endif // DO_DRAW_HOTENDS
+
+//Draw bedlevel
+FORCE_INLINE void _draw_bedlevel_status(){
+  const uint8_t tx = STATUS_BEDLEVEL_TEXT_X;
+  float bedlevel_offset = -1*home_offset[Y_AXIS];
+  _draw_centered_level(bedlevel_offset, tx, 7);
+}
+
 
 #if DO_DRAW_BED
 
@@ -691,6 +707,9 @@ void MarlinUI::draw_status_screen() {
        if (PAGE_CONTAINS(ammetery, ammetery + ammeterh - 1))
         u8g.drawBitmapP(STATUS_AMMETER_X, ammetery, STATUS_AMMETER_BYTEWIDTH, ammeterh, (ammeter.current < 0.1f) ? status_ammeter_bmp_mA : status_ammeter_bmp_A);
     #endif
+
+    // BedLevel
+    TERN_(DO_DRAW_BEDLEVEL, _draw_bedlevel_status());
 
     // Heated Bed
     TERN_(DO_DRAW_BED, _draw_bed_status(blink));

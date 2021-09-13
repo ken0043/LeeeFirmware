@@ -576,6 +576,9 @@ void menu_configuration() {
     EDIT_ITEM(bool, MSG_SOUND, &ui.buzzer_enabled, []{ ui.chirp(); });
   #endif
 
+  //reset belt offset
+  ACTION_ITEM(MSG_RESET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, 0); ui.completion_feedback(true);});
+
   #if ENABLED(EEPROM_SETTINGS)
     ACTION_ITEM(MSG_STORE_EEPROM, ui.store_settings);
     if (!busy) ACTION_ITEM(MSG_LOAD_EEPROM, ui.load_settings);

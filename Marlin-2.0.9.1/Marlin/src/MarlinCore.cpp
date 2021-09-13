@@ -395,7 +395,8 @@ void startOrResumeJob() {
     TERN_(POWER_LOSS_RECOVERY, recovery.purge());
 
     #ifdef EVENT_GCODE_SD_ABORT
-      queue.inject_P(PSTR(EVENT_GCODE_SD_ABORT));
+      //queue.inject_P(PSTR(EVENT_GCODE_SD_ABORT));
+      queue.inject_P(PSTR("G91\nG1 Y50 Z50 F1000"));
     #endif
 
     TERN_(PASSWORD_AFTER_SD_PRINT_ABORT, password.lock_machine());

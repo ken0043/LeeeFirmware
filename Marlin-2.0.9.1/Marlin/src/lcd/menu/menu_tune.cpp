@@ -78,13 +78,17 @@
             lcd_moveto(10, 3);
           #else
             lcd_moveto(0, TERN(HAS_MARLINUI_U8GLIB, LCD_PIXEL_HEIGHT - MENU_FONT_DESCENT, LCD_HEIGHT - 1));
-            lcd_put_u8str_P(GET_TEXT(MSG_BABYSTEP_TOTAL));
+            lcd_put_u8str_P(GET_TEXT(MSG_BELT_OFFSET_TOTAL));
             lcd_put_wchar(':');
           #endif
-          lcd_put_u8str(BABYSTEP_TO_STR(spm * babystep.axis_total[BS_TOTAL_IND(axis)]));
+          lcd_put_u8str(BABYSTEP_TO_STR( -1*(home_offset[axis] - (spm * babystep.axis_total[BS_TOTAL_IND(axis)])) ));
         }
       #endif
     }
+  }
+  float _set_babystep_to_homeoffset(const AxisEnum axis){
+    const float spm = planner.steps_to_mm[axis];
+    return home_offset[axis] - (spm * babystep.axis_total[BS_TOTAL_IND(axis)]);
   }
 
   inline void _lcd_babystep_go(const screenFunc_t screen) {
@@ -96,6 +100,7 @@
   #if ENABLED(BABYSTEP_XY)
     void _lcd_babystep_x() { _lcd_babystep(X_AXIS, GET_TEXT(MSG_BABYSTEP_X)); }
     void _lcd_babystep_y() { _lcd_babystep(Y_AXIS, GET_TEXT(MSG_BABYSTEP_Y)); }
+    void _lcd_babystep_belt() { _lcd_babystep(Y_AXIS, GET_TEXT(MSG_BABYSTEP_BELT)); }
   #endif
 
   #if DISABLED(BABYSTEP_ZPROBE_OFFSET)
@@ -223,14 +228,20 @@ void menu_tune() {
   //
   #if ENABLED(BABYSTEPPING)
     #if ENABLED(BABYSTEP_XY)
-      SUBMENU(MSG_BABYSTEP_X, []{ _lcd_babystep_go(_lcd_babystep_x); });
-      SUBMENU(MSG_BABYSTEP_Y, []{ _lcd_babystep_go(_lcd_babystep_y); });
+      //SUBMENU(MSG_BABYSTEP_X, []{ _lcd_babystep_go(_lcd_babystep_x); });
+      //SUBMENU(MSG_BABYSTEP_Y, []{ _lcd_babystep_go(_lcd_babystep_y); });
+      SUBMENU(MSG_BABYSTEP_BELT, []{ _lcd_babystep_go(_lcd_babystep_belt); });
+
+      ACTION_ITEM(MSG_SET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, _set_babystep_to_homeoffset(Y_AXIS)); ui.return_to_status(); });
+      ACTION_ITEM(MSG_RESET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, 0); ui.return_to_status(); });
     #endif
+    /*
     #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
       SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
     #else
       SUBMENU(MSG_BABYSTEP_Z, lcd_babystep_z);
     #endif
+    */
   #endif
 
   END_MENU();

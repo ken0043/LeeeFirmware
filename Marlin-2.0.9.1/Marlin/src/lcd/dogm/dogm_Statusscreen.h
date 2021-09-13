@@ -120,6 +120,16 @@
 #endif
 
 //
+// Bed level
+//
+#if !STATUS_BEDLEVEL_WIDTH
+  #include "status/bedlevel.h"
+#endif
+#ifndef STATUS_BEDLEVEL_WIDTH
+  #define STATUS_BEDLEVEL_WIDTH 0
+#endif
+
+//
 // Bed
 //
 #if !STATUS_BED_WIDTH && HAS_HEATED_BED && DISABLED(STATUS_COMBINE_HEATERS)
@@ -639,6 +649,31 @@
 #endif
 
 //
+// Bed level Properties
+//
+#ifndef STATUS_BEDLEVEL_BYTEWIDTH
+  #define STATUS_BEDLEVEL_BYTEWIDTH BW(STATUS_BEDLEVEL_WIDTH)
+#endif
+#if STATUS_BEDLEVEL_WIDTH
+  #ifndef STATUS_BEDLEVEL_X
+    #define STATUS_BEDLEVEL_X (LCD_PIXEL_WIDTH - (STATUS_CHAMBER_BYTEWIDTH + STATUS_FAN_BYTEWIDTH + STATUS_BED_BYTEWIDTH + STATUS_BEDLEVEL_BYTEWIDTH) * 8)
+  #endif
+
+  #ifndef STATUS_BEDLEVEL_HEIGHT
+    #define STATUS_BEDLEVEL_HEIGHT(S) (sizeof(status_bedlevel_bmp) / (STATUS_BEDLEVEL_BYTEWIDTH))
+  #endif
+
+  #ifndef STATUS_BEDLEVEL_Y
+    #define STATUS_BEDLEVEL_Y(S) (20 - STATUS_BEDLEVEL_HEIGHT(S))
+  #endif
+
+  #ifndef STATUS_BEDLEVEL_TEXT_X
+    #define STATUS_BEDLEVEL_TEXT_X (STATUS_BEDLEVEL_X + 9)
+  #endif
+
+#endif
+
+//
 // Bed Bitmap Properties
 //
 #ifndef STATUS_BED_BYTEWIDTH
@@ -721,6 +756,7 @@
 #endif
 #if HAS_HEATED_BED && HOTENDS <= 4
   #define DO_DRAW_BED 1
+  #define DO_DRAW_BEDLEVEL 1
 #endif
 #if HAS_CUTTER && !DO_DRAW_BED
   #define DO_DRAW_CUTTER 1
