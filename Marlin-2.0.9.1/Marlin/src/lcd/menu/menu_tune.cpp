@@ -232,7 +232,7 @@ void menu_tune() {
       //SUBMENU(MSG_BABYSTEP_Y, []{ _lcd_babystep_go(_lcd_babystep_y); });
       SUBMENU(MSG_BABYSTEP_BELT, []{ _lcd_babystep_go(_lcd_babystep_belt); });
 
-      ACTION_ITEM(MSG_SET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, _set_babystep_to_homeoffset(Y_AXIS)); ui.return_to_status(); });
+      ACTION_ITEM(MSG_SET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, _set_babystep_to_homeoffset(Y_AXIS)); babystep.reset_total(Y_AXIS); ui.return_to_status(); });
       ACTION_ITEM(MSG_RESET_BELT_OFFSET, []{ set_home_offset(Y_AXIS, 0); ui.return_to_status(); });
     #endif
     /*
