@@ -143,7 +143,9 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Leee v1.4"
+#define CUSTOM_MACHINE_NAME "Leee v1.3"
+//#define CUSTOM_MACHINE_NAME "Leee TMC2130"
+
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
